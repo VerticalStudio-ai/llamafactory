@@ -26,7 +26,7 @@ def main():
     api_host = os.getenv("API_HOST", "0.0.0.0")
     api_port = int(os.getenv("API_PORT", "8000"))
     print(f"Visit http://localhost:{api_port}/docs for API document.")
-    uvicorn.run(app, host=api_host, port=api_port)
+    uvicorn.run(app, host=api_host, port=api_port, uds="/tmp/inference-uvicorn.sock")
 
 
 if __name__ == "__main__":

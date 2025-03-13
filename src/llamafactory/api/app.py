@@ -91,7 +91,7 @@ def create_app(chat_model: "ChatModel") -> "FastAPI":
         dependencies=[Depends(verify_api_key)],
     )
     async def list_models():
-        model_card = ModelCard(id=os.getenv("API_MODEL_NAME", "gpt-3.5-turbo"))
+        model_card = ModelCard(id=os.getenv("API_MODEL_NAME", "Qwen/Qwen2.5-1.5B-Instruct"))
         return ModelList(data=[model_card])
 
     @app.post(
@@ -131,4 +131,4 @@ def run_api() -> None:
     api_host = os.getenv("API_HOST", "0.0.0.0")
     api_port = int(os.getenv("API_PORT", "8000"))
     print(f"Visit http://localhost:{api_port}/docs for API document.")
-    uvicorn.run(app, host=api_host, port=api_port)
+    uvicorn.run(app, host=api_host, port=api_port, uds="/tmp/inference-uvicorn.sock")

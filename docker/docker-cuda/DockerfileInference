@@ -94,6 +94,6 @@ VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/a
 
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install -y nginx
-COPY ../../nginx/combined_nginx.conf /etc/nginx/sites-available/
+COPY ../../nginx/inference_nginx.conf /etc/nginx/sites-available/
 
 EXPOSE 80
