@@ -23,6 +23,7 @@ ARG CONSUL=false
 ARG MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
 
 ENV MODEL_NAME=$MODEL_NAME
+ENV FASTAPI_ROOT_PATH="/api/inference/"
 
 # Set the working directory
 WORKDIR /app
@@ -102,10 +103,10 @@ RUN if [ "$NGINX" == "true" ]; then \
 # Set up volumes
 VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/app/output" ]
 
-COPY ../../nginx/combined_nginx.conf /etc/nginx/sites-available/
+COPY ./nginx/inference_nginx.conf /etc/nginx/sites-available/nginx.conf
+COPY ./entrypoint.sh .
 
-ENTRYPOINT ["llamafactory-cli", "api", "&"]
-CMD ["nginx"]
+ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 
 EXPOSE 80
 

@@ -68,7 +68,7 @@ async def lifespan(app: "FastAPI", chat_model: "ChatModel"):  # collects GPU mem
 
 
 def create_app(chat_model: "ChatModel") -> "FastAPI":
-    root_path = os.getenv("FASTAPI_ROOT_PATH", "")
+    root_path = os.getenv("FASTAPI_ROOT_PATH", "/api/inference")
     app = FastAPI(lifespan=partial(lifespan, chat_model=chat_model), root_path=root_path)
     app.add_middleware(
         CORSMiddleware,
