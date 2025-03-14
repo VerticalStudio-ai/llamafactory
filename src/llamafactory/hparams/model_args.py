@@ -163,7 +163,6 @@ class ModelArguments(QuantizationArguments, ProcessorArguments, ExportArguments,
     Arguments pertaining to which model/config/tokenizer we are going to fine-tune or infer.
     """
 
-    model_name = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-1.5B-Instruct")
     model_name_or_path: Optional[str] = field(
         default=model_name,
         metadata={

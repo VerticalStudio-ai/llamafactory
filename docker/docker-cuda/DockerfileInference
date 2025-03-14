@@ -20,10 +20,10 @@ ARG PIP_INDEX=https://pypi.org/simple
 ARG HTTP_PROXY=
 ARG NGINX=false
 ARG CONSUL=false
-ARG MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
+ARG API_MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
 
-ENV MODEL_NAME=$MODEL_NAME
-ENV FASTAPI_ROOT_PATH="/api/inference/"
+ENV FASTAPI_ROOT_PATH="/api/inference"
+ENV API_MODEL_NAME=$API_MODEL_NAME
 
 # Set the working directory
 WORKDIR /app

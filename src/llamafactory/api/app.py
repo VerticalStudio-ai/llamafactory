@@ -85,7 +85,7 @@ def create_app(chat_model: "ChatModel") -> "FastAPI":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key.")
 
     @app.get(
-        "/v1/models",
+        "/models",
         response_model=ModelList,
         status_code=status.HTTP_200_OK,
         dependencies=[Depends(verify_api_key)],
@@ -95,7 +95,7 @@ def create_app(chat_model: "ChatModel") -> "FastAPI":
         return ModelList(data=[model_card])
 
     @app.post(
-        "/v1/chat/completions",
+        "/chat/completions",
         response_model=ChatCompletionResponse,
         status_code=status.HTTP_200_OK,
         dependencies=[Depends(verify_api_key)],
@@ -111,7 +111,7 @@ def create_app(chat_model: "ChatModel") -> "FastAPI":
             return await create_chat_completion_response(request, chat_model)
 
     @app.post(
-        "/v1/score/evaluation",
+        "/score/evaluation",
         response_model=ScoreEvaluationResponse,
         status_code=status.HTTP_200_OK,
         dependencies=[Depends(verify_api_key)],
