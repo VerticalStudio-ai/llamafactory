@@ -24,6 +24,7 @@ ARG API_MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
 
 ENV FASTAPI_ROOT_PATH="/api/inference"
 ENV API_MODEL_NAME=$API_MODEL_NAME
+ENV MODEL_NAME=$API_MODEL_NAME
 
 # Set the working directory
 WORKDIR /app
