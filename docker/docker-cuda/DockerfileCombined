@@ -104,7 +104,7 @@ RUN if [ "$NGINX" == "true" ]; then \
 # Set up volumes
 VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/app/output" ]
 
-COPY ./nginx/combined_nginx.conf /etc/nginx/sites-available/
+COPY ./nginx/combined_nginx.conf /etc/nginx/sites-available/nginx.conf
 COPY ./docker/entrypoints/entrypoint-combined.sh ./entrypoint.sh
 
 ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
