@@ -18,11 +18,13 @@ ARG INSTALL_HQQ=false
 ARG INSTALL_EETQ=false
 ARG PIP_INDEX=https://pypi.org/simple
 ARG HTTP_PROXY=
-ARG NGINX=false
+ARG NGINX=true
 ARG CONSUL=false
-ARG MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
+ARG API_MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
 
-ENV MODEL_NAME=$MODEL_NAME
+ENV GRADIO_ROOT_PATH="/api/fine-tune"
+ENV API_MODEL_NAME=$API_MODEL_NAME
+ENV MODEL_NAME=$API_MODEL_NAME
 
 # Set the working directory
 WORKDIR /app
@@ -102,7 +104,10 @@ RUN if [ "$NGINX" == "true" ]; then \
 # Set up volumes
 VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/app/output" ]
 
-COPY ../../nginx/combined_nginx.conf /etc/nginx/sites-available/
+COPY ./nginx/combined_nginx.conf /etc/nginx/sites-available/
+COPY ./docker/entrypoints/entrypoint-combined.sh ./entrypoint.sh
+
+ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 
 EXPOSE 80
 

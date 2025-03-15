@@ -105,7 +105,7 @@ RUN if [ "$NGINX" == "true" ]; then \
 VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/app/output" ]
 
 COPY ./nginx/fine_tune_nginx.conf /etc/nginx/sites-available/nginx.conf
-COPY ./entrypoint-fine-tune.sh ./entrypoint.sh
+COPY ./docker/entrypoints/entrypoint-fine-tune.sh ./entrypoint.sh
 
 ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 
