@@ -68,7 +68,7 @@ async def lifespan(app: "FastAPI", chat_model: "ChatModel"):  # collects GPU mem
 
 
 def create_app(chat_model: "ChatModel") -> "FastAPI":
-    root_path = os.getenv("FASTAPI_ROOT_PATH", "")
+    root_path = os.getenv("FASTAPI_ROOT_PATH", "/api/inference")
     app = FastAPI(lifespan=partial(lifespan, chat_model=chat_model), root_path=root_path)
     app.add_middleware(
         CORSMiddleware,
@@ -85,17 +85,17 @@ def create_app(chat_model: "ChatModel") -> "FastAPI":
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API key.")
 
     @app.get(
-        "/v1/models",
+        "/models",
         response_model=ModelList,
         status_code=status.HTTP_200_OK,
         dependencies=[Depends(verify_api_key)],
     )
     async def list_models():
-        model_card = ModelCard(id=os.getenv("API_MODEL_NAME", "gpt-3.5-turbo"))
+        model_card = ModelCard(id=os.getenv("API_MODEL_NAME", "Qwen/Qwen2.5-1.5B-Instruct"))
         return ModelList(data=[model_card])
 
     @app.post(
-        "/v1/chat/completions",
+        "/chat/completions",
         response_model=ChatCompletionResponse,
         status_code=status.HTTP_200_OK,
         dependencies=[Depends(verify_api_key)],
@@ -111,7 +111,7 @@ def create_app(chat_model: "ChatModel") -> "FastAPI":
             return await create_chat_completion_response(request, chat_model)
 
     @app.post(
-        "/v1/score/evaluation",
+        "/score/evaluation",
         response_model=ScoreEvaluationResponse,
         status_code=status.HTTP_200_OK,
         dependencies=[Depends(verify_api_key)],
@@ -131,4 +131,4 @@ def run_api() -> None:
     api_host = os.getenv("API_HOST", "0.0.0.0")
     api_port = int(os.getenv("API_PORT", "8000"))
     print(f"Visit http://localhost:{api_port}/docs for API document.")
-    uvicorn.run(app, host=api_host, port=api_port)
+    uvicorn.run(app, host=api_host, port=api_port, uds="/tmp/inference-uvicorn.sock")

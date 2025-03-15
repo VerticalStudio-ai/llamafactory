@@ -22,7 +22,8 @@ def main():
     gradio_ipv6 = is_env_enabled("GRADIO_IPV6")
     gradio_share = is_env_enabled("GRADIO_SHARE")
     server_name = os.getenv("GRADIO_SERVER_NAME", "[::]" if gradio_ipv6 else "0.0.0.0")
-    create_ui().queue().launch(share=gradio_share, server_name=server_name, inbrowser=True)
+    root_path = os.getenv("GRADIO_ROOT_PATH", "/api/fine-tune")
+    create_ui().queue().launch(share=gradio_share, server_name=server_name, inbrowser=True, root_path=root_path)
 
 
 if __name__ == "__main__":
