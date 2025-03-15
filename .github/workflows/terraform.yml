@@ -1,0 +1,70 @@
+name: 'Deploy Terraform IaC to AWS'
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  terraform-deploy-nonprod:
+    name: 'Terraform Deploy to Nonprod'
+    if: github.ref != 'refs/heads/main' && github.event_name == 'pull_request'
+    permissions:
+      id-token: write
+      contents: read
+    uses: VerticalStudio-ai/vertical-ci-templates/.github/workflows/terraform-aws-deploy.yml@v1
+    with:
+      aws_account_id: '841162710087'
+      environment: 'nonprod'
+
+  terraform-deploy-prod:
+    name: 'Terraform Deploy to Prod'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    permissions:
+      id-token: write
+      contents: read
+    uses: VerticalStudio-ai/vertical-ci-templates/.github/workflows/terraform-aws-deploy.yml@v1
+    with:
+      aws_account_id: '588738599749'
+      environment: 'prod'
+
+  create-release:
+    name: 'Create Semantic Release'
+    needs: terraform-deploy-prod
+    uses: VerticalStudio-ai/vertical-ci-templates/.github/workflows/semantic-release.yml@v1
+    permissions:
+      contents: write
+      issues: write
+      packages: write
+      pull-requests: write
+      statuses: write
+
+  create-github-docker-release:
+    name: 'Create docker release'
+    needs: create-release
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login into ghcr registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        uses: docker/metadata-action@v3
+        id: meta
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
