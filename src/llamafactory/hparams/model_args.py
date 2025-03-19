@@ -16,6 +16,7 @@
 # limitations under the License.
 
 import json
+import os
 from dataclasses import asdict, dataclass, field, fields
 from typing import Any, Dict, Literal, Optional, Union
 
@@ -162,8 +163,9 @@ class ModelArguments(QuantizationArguments, ProcessorArguments, ExportArguments,
     Arguments pertaining to which model/config/tokenizer we are going to fine-tune or infer.
     """
 
+    model_name = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-1.5B-Instruct")
     model_name_or_path: Optional[str] = field(
-        default=None,
+        default=model_name,
         metadata={
             "help": "Path to the model weight or identifier from huggingface.co/models or modelscope.cn/models."
         },

@@ -18,6 +18,13 @@ ARG INSTALL_HQQ=false
 ARG INSTALL_EETQ=false
 ARG PIP_INDEX=https://pypi.org/simple
 ARG HTTP_PROXY=
+ARG NGINX=false
+ARG CONSUL=false
+ARG API_MODEL_NAME="Qwen/Qwen2.5-1.5B-Instruct"
+
+ENV FASTAPI_ROOT_PATH="/api/inference"
+ENV API_MODEL_NAME=$API_MODEL_NAME
+ENV MODEL_NAME=$API_MODEL_NAME
 
 # Set the working directory
 WORKDIR /app
@@ -89,11 +96,21 @@ RUN if [ -n "$HTTP_PROXY" ]; then \
         unset https_proxy; \
     fi
 
+RUN if [ "$NGINX" == "true" ]; then \
+    	apt-get -y update;  \
+    	apt-get -y upgrade;  \
+    	apt-get install -y nginx; \
+	fi
 # Set up volumes
 VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/app/output" ]
 
-RUN apt-get -y update && apt-get -y upgrade
-RUN apt-get install -y nginx
-COPY ../../nginx/combined_nginx.conf /etc/nginx/sites-available/
+COPY ./nginx/inference_nginx.conf /etc/nginx/sites-available/nginx.conf
+COPY ./docker/entrypoints/entrypoint-inference.sh ./entrypoint.sh
+
+ENTRYPOINT ["/bin/sh", "entrypoint.sh"]
 
 EXPOSE 80
+
+EXPOSE 8300
+EXPOSE 8301 8301/udp 8302 8302/udp
+EXPOSE 8500 8600 8600/udp
