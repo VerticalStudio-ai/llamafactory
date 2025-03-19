@@ -96,11 +96,14 @@ RUN if [ -n "$HTTP_PROXY" ]; then \
         unset https_proxy; \
     fi
 
+
+# NGINX
 RUN if [ "$NGINX" == "true" ]; then \
     	apt-get -y update;  \
     	apt-get -y upgrade;  \
     	apt-get install -y nginx; \
 	fi
+
 # Set up volumes
 VOLUME [ "/root/.cache/huggingface", "/root/.cache/modelscope", "/app/data", "/app/output" ]
 
